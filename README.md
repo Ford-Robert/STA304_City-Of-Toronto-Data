@@ -23,7 +23,7 @@ Aspects of the code were written with the help of the auto-complete tool, Codriv
 
 ## Some checks
 
-- [ ] Change the rproj file name so that it's not starter_folder.Rproj
+- [x ] Change the rproj file name so that it's not starter_folder.Rproj
 - [ ] Change the README title so that it's not Starter folder
 - [ ] Remove files that you're not using
 - [ ] Update comments in R scripts
