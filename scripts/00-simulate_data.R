@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Simulates City of Toronto Red Light Camera Infractions Data
+# Purpose: Simulates Delay data for the; Subway, Bus, and Streetcar
 # Author: Robert Ford
 # Date: 16 September 2024
 # Contact: robert.ford@mail.utoronto.ca

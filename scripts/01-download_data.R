@@ -10,30 +10,54 @@
 # Pre-requisites: [...UPDATE THIS...]
 # Any other information needed? [...UPDATE THIS...]
 
-install.packages("opendatatoronto")
-install.packages("tidyverse")
-install.packages("dplyr")
+#install.packages("opendatatoronto")
+#install.packages("tidyverse")
+#install.packages("dplyr")
+
 
 #### Workspace setup ####
-library(opendatatoronto)
 library(tidyverse)
-library(dplyr)
+library(readxl)
 
 #### Download data ####
 
 library(opendatatoronto)
 library(dplyr)
 
+library(opendatatoronto)
+library(dplyr)
 
+subway_package_id <- "996cfe8d-fb35-40ce-b569-698d51fc683b"
+subway_resource_names <- c("ttc-subway-delay-jan-2014-april-2017",
+                           "ttc-subway-delay-may-december-2017",
+                           "ttc-subway-delay-data-2018",
+                           "ttc-subway-delay-data-2019",
+                           "ttc-subway-delay-data-2020",
+                           "ttc-subway-delay-data-2021",
+                           "ttc-subway-delay-data-2022",
+                           "ttc-subway-delay-data-2023",
+                           "ttc-subway-delay-data-2024")
 
-# get package
+extract_data <- function(package_id, resource_names) {
+  # List all resources from the package
+  resources <- list_package_resources(package_id)
+  
+  # Filter resources based on the provided names
+  selected_resources <- resources %>%
+    filter(name %in% resource_names)
+  
+  # Create a named list to store each dataset separately
+  extracted_data <- setNames(lapply(selected_resources$id, get_resource), 
+                             selected_resources$name)
+  
+  return(extracted_data)
+}
 
-package <- show_package("996cfe8d-fb35-40ce-b569-698d51fc683b")
+# Extract the data (each dataset is stored separately in the list)
+subway_data_list <- extract_data(subway_package_id, subway_resource_names)
 
-package
-
-
-
+# View individual data frames (example for one dataset)
+View(subway_data_list[["ttc-subway-delay-data-2023"]])
 
 #### Save data ####
 # [...UPDATE THIS...]
