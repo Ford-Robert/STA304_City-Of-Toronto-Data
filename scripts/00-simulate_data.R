@@ -1,11 +1,11 @@
 #### Preamble ####
-# Purpose: Simulates... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Simulates City of Toronto Red Light Camera Infractions Data
+# Author: Robert Ford
+# Date: 16 September 2024
+# Contact: robert.ford@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites:
+# Any other information needed?
 
 
 #### Workspace setup ####
@@ -13,7 +13,8 @@ library(tidyverse)
 # [...UPDATE THIS...]
 
 #### Simulate data ####
-# [...ADD CODE HERE...]
+set.seed(304)
+
 
 
 
