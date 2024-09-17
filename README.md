@@ -3,6 +3,18 @@
 ## Overview
 Set up version control in CS lab check
 
+Source used:
+https://toronto.cityhallwatcher.com/p/chw257
+
+Subway data:
+https://open.toronto.ca/dataset/ttc-subway-delay-data/
+
+Bus data:
+https://open.toronto.ca/dataset/ttc-bus-delay-data/
+
+Streetcar data:
+https://open.toronto.ca/dataset/ttc-streetcar-delay-data/
+
 ## File Structure
 
 The repo is structured as:
