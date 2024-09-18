@@ -1,4 +1,4 @@
-# Why The TTC Should'nt Brag About Being Profitable - Robert Ford
+# Why The TTC Shouldn't Brag About Being Profitable - Robert Ford
 
 ## Overview
 Set up version control in CS lab check
