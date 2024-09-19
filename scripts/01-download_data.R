@@ -276,6 +276,10 @@ View(streetcar_all_data)
 #### Save data ####
 # [...UPDATE THIS...]
 # change the_raw_data to whatever name you assigned when you downloaded it.
-#write_csv(the_raw_data, "inputs/data/raw_data.csv") 
+
+
+write_csv(subway_all_data, "inputs/data/subway_data.csv")
+write_csv(bus_all_data, "inputs/data/bus_data.csv")
+write_csv(streetcar_all_data, "inputs/data/streetcar_data.csv")
 
 
