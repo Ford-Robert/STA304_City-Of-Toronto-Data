@@ -24,8 +24,6 @@ library(readxl)
 library(opendatatoronto)
 library(dplyr)
 
-library(opendatatoronto)
-library(dplyr)
 
 # Function to extract data for a given package and resource names
 extract_data <- function(package_id, resource_names) {
@@ -88,10 +86,86 @@ subway_data_list <- extract_data(subway_package_id, subway_resource_names)
 bus_data_list <- extract_data(bus_package_id, bus_resource_names)
 streetcar_data_list <- extract_data(streetcar_package_id, streetcar_resource_names)
 
-# Access and view the data separately
-View(subway_data_list[["ttc-subway-delay-data-2023"]])
-View(bus_data_list[["ttc-bus-delay-data-2022"]])
-View(streetcar_data_list[["ttc-streetcar-delay-data-2021"]])
+#View(subway_data_list[["ttc-subway-delay-data-2024"]])
+#View(bus_data_list[["ttc-bus-delay-data-2021"]])
+#View(streetcar_data_list[["ttc-streetcar-delay-data-2019"]])
+
+
+#In the bus as street car datasets columns 2 and 3 change data type and what
+#they represent over time. So they must be removed in order to collapse the data
+remove_columns <- function(data_list, columns_to_remove) {
+  # Initialize an empty list to store the modified data frames
+  modified_data_list <- list()
+  
+  # Helper function to remove columns from a data frame
+  remove_cols_from_df <- function(df, cols_to_remove) {
+    if (is.numeric(cols_to_remove)) {
+      # Remove columns by index
+      num_cols <- ncol(df)
+      cols_to_remove_actual <- cols_to_remove[cols_to_remove <= num_cols]
+      df <- df[ , -cols_to_remove_actual, drop = FALSE]
+    }
+    else {
+      stop("columns_to_remove should be numeric indices.")
+    }
+    return(df)
+  }
+  
+  # Loop over each dataset in the provided data list
+  for (dataset_name in names(data_list)) {
+    data <- data_list[[dataset_name]]
+    
+    # Check if the data is a list of data frames (e.g., monthly data)
+    if (is.list(data) && !is.data.frame(data)) {
+      # Apply the helper function to each data frame in the list
+      modified_monthly_data <- lapply(data, remove_cols_from_df, cols_to_remove = columns_to_remove)
+      
+      # Store the list of modified monthly data frames in the modified data list
+      modified_data_list[[dataset_name]] <- modified_monthly_data
+    } else {
+      # For single data frames
+      data_df <- data  # Ensure we're working with a data frame
+      
+      # Remove the specified columns
+      data_df <- remove_cols_from_df(data_df, columns_to_remove)
+      
+      # Store the modified data frame in the list
+      modified_data_list[[dataset_name]] <- data_df
+    }
+  }
+  
+  # Return the list of modified data frames
+  return(modified_data_list)
+}
+
+
+
+columns_to_remove_indices <- c(2, 3)
+
+bus_data_trimmed <- remove_columns(bus_data_list, columns_to_remove_indices)
+streetcar_data_trimmed <- remove_columns(streetcar_data_list, columns_to_remove_indices)
+
+#Extra column in April of 2019 Streetcar data
+temp_df <- streetcar_data_trimmed[["ttc-streetcar-delay-data-2019"]][["Apr 2019"]]
+temp_df <- temp_df[, -4]
+streetcar_data_trimmed[["ttc-streetcar-delay-data-2019"]][["Apr 2019"]] <- temp_df
+
+#Extra column in April of 2019 Bus data
+temp_df <- bus_data_trimmed[["ttc-bus-delay-data-2019"]][["Apr 2019"]]
+temp_df <- temp_df[, -4]
+bus_data_trimmed[["ttc-bus-delay-data-2019"]][["Apr 2019"]] <- temp_df
+
+#Extra column in Dec of 2021 Bus data
+temp_df <- bus_data_trimmed[["ttc-bus-delay-data-2021"]][["Dec 21"]]
+temp_df <- temp_df[, -9]
+bus_data_trimmed[["ttc-bus-delay-data-2021"]][["Dec 21"]] <- temp_df
+
+#View(bus_data_trimmed)
+#View(streetcar_data_trimmed)
+
+
+
+
 
 
 #### Save data ####
@@ -99,4 +173,4 @@ View(streetcar_data_list[["ttc-streetcar-delay-data-2021"]])
 # change the_raw_data to whatever name you assigned when you downloaded it.
 #write_csv(the_raw_data, "inputs/data/raw_data.csv") 
 
-         
+
