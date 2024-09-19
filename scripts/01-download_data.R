@@ -237,8 +237,41 @@ subway_data_final <- rename_columns_by_position(subway_data_list, subway_column_
 # from 2014 to 2024, I will create one data frame for each mode of transport 
 # that will contain all the delay data.
 
+collate_data <- function(data_list) {
+  # Initialize a list to store all data frames
+  all_data_frames <- list()
+  
+  # Iterate over each dataset in the data list
+  for (dataset_name in names(data_list)) {
+    data <- data_list[[dataset_name]]
+    
+    # Check if the data is a list of data frames (e.g., monthly data)
+    if (is.list(data) && !is.data.frame(data)) {
+      # Combine monthly data frames into one data frame for the year
+      combined_year_data <- bind_rows(data)
+    } else {
+      # Data is a single data frame for the year
+      combined_year_data <- data
+    }
+    
+    # Append the combined yearly data to the list
+    all_data_frames[[dataset_name]] <- combined_year_data
+  }
+  
+  # Combine all yearly data frames into one data frame
+  final_data <- bind_rows(all_data_frames)
+  
+  return(final_data)
+}
 
 
+subway_all_data <- collate_data(subway_data_final)
+bus_all_data <- collate_data(bus_data_final)
+streetcar_all_data <- collate_data(streetcar_data_final)
+
+View(subway_all_data)
+View(bus_all_data)
+View(streetcar_all_data)
 
 #### Save data ####
 # [...UPDATE THIS...]
