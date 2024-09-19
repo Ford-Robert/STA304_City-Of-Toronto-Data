@@ -164,6 +164,78 @@ bus_data_trimmed[["ttc-bus-delay-data-2021"]][["Dec 21"]] <- temp_df
 #View(streetcar_data_trimmed)
 
 
+rename_columns_by_position <- function(data_list, new_col_names) {
+  # Initialize an empty list to store the renamed data frames
+  renamed_data_list <- list()
+  
+  # Loop over each dataset in the provided data list
+  for (dataset_name in names(data_list)) {
+    data <- data_list[[dataset_name]]
+    
+    # Check if the data is a list of data frames (e.g., monthly data)
+    if (is.list(data) && !is.data.frame(data)) {
+      # Initialize a list to store renamed monthly data frames
+      renamed_monthly_data <- list()
+      
+      # Loop over each month's data frame
+      for (month_name in names(data)) {
+        month_data <- data[[month_name]]
+        
+        # Get the number of columns in the data frame
+        num_cols <- ncol(month_data)
+        
+        # Determine how many columns we can rename
+        num_cols_to_rename <- min(length(new_col_names), num_cols)
+        
+        # Rename the columns based on their positions
+        colnames(month_data)[1:num_cols_to_rename] <- new_col_names[1:num_cols_to_rename]
+        
+        # Append the renamed month data to the list
+        renamed_monthly_data[[month_name]] <- month_data
+      }
+      
+      # Store the list of renamed monthly data frames in the renamed data list
+      renamed_data_list[[dataset_name]] <- renamed_monthly_data
+    } else {
+      # For single data frames
+      data_df <- data  # Ensure we're working with a data frame
+      
+      # Get the number of columns in the data frame
+      num_cols <- ncol(data_df)
+      
+      # Determine how many columns we can rename
+      num_cols_to_rename <- min(length(new_col_names), num_cols)
+      
+      # Rename the columns based on their positions
+      colnames(data_df)[1:num_cols_to_rename] <- new_col_names[1:num_cols_to_rename]
+      
+      # Store the renamed data frame in the list
+      renamed_data_list[[dataset_name]] <- data_df
+    }
+  }
+  
+  # Return the list of renamed data frames
+  return(renamed_data_list)
+}
+
+# Define the new column names
+new_column_names <- c("Date", "Day", "Location", "Incident", "Delay", "Gap", "Direction", "Vehicle")
+subway_column_names <- c("Date", "Time", "Day", "Station", "Incident", "Delay", "Gap", "Bound", "Line", "Vehicle")
+
+# Rename columns in the trimmed data
+bus_data_final <- rename_columns_by_position(bus_data_trimmed, new_column_names)
+streetcar_data_final <- rename_columns_by_position(streetcar_data_trimmed, new_column_names)
+subway_data_final <- rename_columns_by_position(subway_data_list, subway_column_names)
+
+
+#View(bus_data_final)
+#View(streetcar_data_final)
+#View(subway_data_final)
+
+
+# Now that the data is consistent in both name and data type across every year, 
+# from 2014 to 2024, I will create one data frame for each mode of transport 
+# that will contain all the delay data.
 
 
 
