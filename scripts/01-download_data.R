@@ -25,6 +25,7 @@ library(opendatatoronto)
 library(dplyr)
 
 
+
 # Function to extract data for a given package and resource names
 extract_data <- function(package_id, resource_names) {
   # List all resources from the package
@@ -276,7 +277,8 @@ View(streetcar_all_data)
 #### Save data ####
 # [...UPDATE THIS...]
 # change the_raw_data to whatever name you assigned when you downloaded it.
-
+codes_data <- read_excel("inputs/data/ttc-subway-delay-codes.xlsx")
+write.csv(codes_data, "inputs/data/subway-delay-codes.csv", row.names = FALSE)
 
 write_csv(subway_all_data, "inputs/data/subway_data.csv")
 write_csv(bus_all_data, "inputs/data/bus_data.csv")
