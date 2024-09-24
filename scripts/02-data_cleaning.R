@@ -45,52 +45,61 @@ raw_data_subway$vehicle <- "Subway"
 raw_data_streetcar$vehicle <- "Streetcar"
 raw_data_bus$vehicle <- "Bus"
 
-#TODO: DO I NEED LINE? LOST BUS AND STREET LINE
 raw_data_subway <- raw_data_subway |> select(-Time, -Bound, -Vehicle, -Gap)
 raw_data_subway <- rename(raw_data_subway, Location = Station)
-raw_data_subway <- raw_data_subway |> mutate(
-  Line =
-    case_match(
-      Line,
-      "YU" ~ "1",
-      "BD" ~ "2", 
-      "SRT" ~ "3", 
-      "SHP" ~ "4",
-      "YU / BD" ~ "1",
-      "BD/YU" ~ "2", 
-      "BLOOR DANFORTH & YONGE" ~ "2",
-      "YUS/BD" ~ "1",
-      "BD LINE 2" ~ "2", 
-      "999" ~ "NA",
-      "YUS" ~ "1",
-      "YU & BD" ~ "1",
-      "77 SWANSEA" ~ "NA"
-    )
-)
 
 raw_data_subway <- raw_data_subway |> select(Date, Day, vehicle, Location, Incident, Delay)
 raw_data_subway
-#View(raw_data_subway)
 
-raw_data_streetcar <- raw_data_streetcar %>%
-  mutate(line = as.numeric(NA))
+
 raw_data_streetcar <- raw_data_streetcar |> select(-Vehicle, -Gap)
 raw_data_streetcar <- raw_data_streetcar |> select(Date, Day, vehicle, Location, Incident, Delay)
 raw_data_streetcar 
 
-#View(raw_data_streetcar)
-
-raw_data_bus
-raw_data_bus <- raw_data_bus %>%
-  mutate(line = as.numeric(NA))
 raw_data_bus <- raw_data_bus |> select(-Direction, -Vehicle, -Gap)
-raw_data_bus <- raw_data_bus |> select(Date, Time, Day, vehicle, Line, Location, Incident, `Min Delay`)
-raw_data_bus <- raw_data_bus |> mutate(Line = as.character(Line))
-raw_data_bus
+raw_data_bus <- raw_data_bus |> select(Date, Day, vehicle, Location, Incident, Delay)
 
 
 
+
+#View(raw_data_subway)
+#View(raw_data_streetcar)
+#View(raw_data_bus)
+
+
+#Combine the three datasets 
+combined_data <- bind_rows(raw_data_bus, raw_data_streetcar, raw_data_subway)
+
+#Fix some categories
+combined_data <- combined_data |> mutate(
+  Incident =
+    case_match(
+      Incident,
+      "Diversion"  ~ "Diversion", 
+      "Security"  ~ "Security", 
+      "Cleaning - Unsanitary" ~ "Cleaning",
+      "Emergency Services"  ~ "Emergency Services", 
+      "Collision - TTC" ~ "Collision",
+      "Mechanical" ~ "Mechanical",
+      "Operations - Operator" ~ "Operations",
+      "Investigation" ~ "Investigation", 
+      "Utilized Off Route" ~ "Diversion",
+      "General Delay" ~ "General Delay", 
+      "Road Blocked - NON-TTC Collision" ~ "Collision",
+      "Held By" ~ "Held By" , 
+      "Vision" ~ "Vision", 
+      "Operations" ~ "Operations", 
+      "Collision - TTC Involved" ~ "Collision",
+      "Late Entering Service" ~ "Late Entering Service", 
+      "Overhead" ~ "Overhead", 
+      "Rail/Switches" ~ "Rail/Switches", 
+      "NA" ~ "N/A"
+    )
+)
+
+View(combined_data)
 
 
 #### Save data ####
-write_csv(cleaned_data, "outputs/data/analysis_data.csv")
+write_csv(combined_data, "outputs/data/cleaned_dataset.csv")
+
