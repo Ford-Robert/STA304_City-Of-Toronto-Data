@@ -18,7 +18,7 @@ raw_data_subway <-read_csv("inputs/data/subway_data.csv")
 #subway_codes <- read_csv("inputs/data/subway-delay-codes.csv")
 
 
-#View(raw_bus_data)
+View(raw_data_bus)
 #View(raw_streetcar_data)
 #View(raw_data_subway)
 #str(raw_bus_data)
@@ -70,34 +70,67 @@ raw_data_bus <- raw_data_bus |> select(Date, Day, vehicle, Location, Incident, D
 #Combine the three datasets 
 combined_data <- bind_rows(raw_data_bus, raw_data_streetcar, raw_data_subway)
 
+
+
+
+unique_incidents <- combined_data %>%
+  group_by(Incident) %>%
+  slice(1) %>%
+  ungroup()
+
+#View(unique_incidents)
+
+
 #Fix some categories
 combined_data <- combined_data |> mutate(
   Incident =
     case_match(
       Incident,
-      "Diversion"  ~ "Diversion", 
-      "Security"  ~ "Security", 
+      "Cleaning" ~ "Cleaning", 
+      "Cleaning - Disinfection" ~ "Cleaning",
       "Cleaning - Unsanitary" ~ "Cleaning",
-      "Emergency Services"  ~ "Emergency Services", 
       "Collision - TTC" ~ "Collision",
-      "Mechanical" ~ "Mechanical",
-      "Operations - Operator" ~ "Operations",
-      "Investigation" ~ "Investigation", 
-      "Utilized Off Route" ~ "Diversion",
-      "General Delay" ~ "General Delay", 
-      "Road Blocked - NON-TTC Collision" ~ "Collision",
-      "Held By" ~ "Held By" , 
-      "Vision" ~ "Vision", 
-      "Operations" ~ "Operations", 
       "Collision - TTC Involved" ~ "Collision",
-      "Late Entering Service" ~ "Late Entering Service", 
-      "Overhead" ~ "Overhead", 
-      "Rail/Switches" ~ "Rail/Switches", 
-      "NA" ~ "N/A"
+      "Diversion" ~ "Diversion",
+      "Emergency Services" ~ "Emergency Services",
+      "General Delay" ~ "General Delay",
+      "Held By" ~ "Held By",
+      "Investigation" ~ "Investigation",
+      "Late" ~ "Late",
+      "Late Entering Service" ~ "Late Entering Service",
+      "Late Entering Service - Mechanical" ~ "Late Entering Service",
+      "Late Leaving Garage" ~ "Late Leaving Garage",
+      "Late Leaving Garage - Management" ~ "Late Leaving Garage",
+      "Late Leaving Garage - Mechanical" ~ "Late Leaving Garage",
+      "Late Leaving Garage - Operations" ~ "Late Leaving Garage",
+      "Late Leaving Garage - Operator" ~ "Late Leaving Garage",
+      "Late Leaving Garage - Vision" ~ "Late Leaving Garage",
+      "Management" ~ "Management",
+      "Mechanical" ~ "Mechanical",
+      "Operations" ~ "Operations",
+      "Operations - Operator" ~ "Operations",
+      "Overhead" ~ "Overhead",
+      "Overhead - Pantograph" ~ "Overhead",
+      "Rail/Switches" ~ "Rail/Switches",
+      "Road Block - Non-TTC Collision" ~ "Collision",
+      "Road Blocked - NON-TTC Collision" ~ "Collision",
+      "Roadblock by Collision - Non-TTC" ~ "Collision",
+      "Security" ~ "Security",
+      "Securitty" ~ "Security",  # Handling the typo
+      "Utilized Off Route" ~ "Diversion",
+      "Utilizing Off Route" ~ "Diversion",
+      "Vision" ~ "Vision",
+      "e" ~ "Other",  # Handling unknown category
+      "NA" ~ "N/A",
+      .default = Incident  # Retain unmatched values
     )
 )
-
 View(combined_data)
+
+
+#From Test we need to Remove some rows that are corrupted
+# I first remove any rows that contain an NA, though this data may be accurate
+# I want my analysis to focus on the complete record
 
 
 #### Save data ####
