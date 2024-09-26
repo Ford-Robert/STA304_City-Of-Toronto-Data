@@ -28,18 +28,26 @@ library(patchwork)
 ```
 
 ```{r}
+#| message: false
+#| echo: false
+#| warning: false
 data <- read_csv(here::here("outputs/data/cleaned_dataset.csv"))
 
 ```
 
-
-# Introduction
+# Introduction{#sec-introduction}
 
 
 
 # Data {#sec-data}
 
 ```{r num-incidents-by-mode}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: (left) Total Number of Incidents (right) Total Amount of Delay Time
+#| fig-align: center
+
 plot1 <- ggplot(data, aes(x = vehicle)) +
   geom_bar(fill = "steelblue") +
   scale_y_continuous(labels = comma) +
@@ -54,7 +62,7 @@ cumulative_delay <- data %>%
 plot2 <- ggplot(cumulative_delay, aes(x = vehicle, y = total_delay)) +
   geom_bar(stat = "identity", fill = "tomato") +
   scale_y_continuous(labels = comma) +
-  labs(title = "Total Cumulative Delay Time by Vehicle", x = "Vehicle Type", y = "Total Delay (Minutes)") +
+  labs(title = "Cumulative Delay Time by Vehicle", x = "Vehicle Type", y = "Total Delay (Minutes)") +
   theme_minimal()
 
 grid.arrange(plot1, plot2, ncol = 2)
@@ -62,19 +70,30 @@ grid.arrange(plot1, plot2, ncol = 2)
 ```
 
 ```{r ave-delay-by-mode}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Average Amount of Delay Time by Vehicle Type
+#| fig-align: center
 
 average_delay <- data %>%
   group_by(vehicle) %>%
   summarise(avg_delay = mean(Delay, na.rm = TRUE))
 
 ggplot(average_delay, aes(x = vehicle, y = avg_delay)) +
-  geom_bar(stat = "identity", fill = "skyblue") +
+  geom_bar(stat = "identity", fill = "steelblue") +
   labs(title = "Average Delay Time by Vehicle Type", x = "Vehicle Type", y = "Average Delay (Minutes)") +
   theme_minimal()
 
 ```
 
 ```{r ave-delay-by-incident}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Average Amount of Delay Time by Incident Type
+#| fig-align: center
+
 data_incident_avg_delay <- data %>%
   group_by(Incident) %>%
   summarise(avg_delay = mean(Delay, na.rm = TRUE), .groups = 'drop') %>%
@@ -94,94 +113,19 @@ data_incident_by_delay <- data %>%
   summarise(incident_count = n(), avg_delay = mean(Delay, na.rm = TRUE), .groups = 'drop') %>%
   group_by(Incident) %>%
   mutate(percentage = (incident_count / sum(incident_count)) * 100) %>%
-  mutate(Incident = fct_reorder(Incident, avg_delay, .desc = TRUE))  # Reorder by avg_delay
-
-# Create the stacked bar chart with percentages
-ggplot(data_incident_by_delay, aes(x = Incident, y = avg_delay, fill = vehicle)) +
-  geom_bar(stat = "identity", position = "fill") +  # Stacked bars, normalized to show proportions
-  labs(title = "Average Delay Time by Incident Type and Vehicle (Proportions)",
-       x = "Incident Type", y = "Proportion of Incidents", fill = "Vehicle Type") +
-  scale_y_continuous(labels = scales::percent) +  # Show percentages on y-axis
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 10))
+  mutate(Incident = fct_reorder(Incident, avg_delay, .desc = TRUE))
 
 ```
-```{r}
-data_total_delay <- data %>%
-  group_by(Incident, vehicle) %>%
-  summarise(total_delay = sum(Delay, na.rm = TRUE), .groups = 'drop')
-
-# Step 2: Reorder the Incident types based on total delay for better visualization
-data_total_delay <- data_total_delay %>%
-  group_by(Incident) %>%
-  mutate(Incident = fct_reorder(Incident, total_delay, .desc = TRUE))  # Reorder by total_delay
-
-# Step 3: Create the stacked bar chart
-ggplot(data_total_delay, aes(x = Incident, y = total_delay, fill = vehicle)) +
-  geom_bar(stat = "identity", position = "stack") +  # Stacked bars for total delay time
-  labs(title = "Total Delay Time by Incident Type and Vehicle", 
-       x = "Incident Type", y = "Total Delay Time (Minutes)", fill = "Vehicle Type") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 10))
-```
 
 
-
-```{r incident-type}
+```{r ave-delay-bus}
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: Delay Incidence by Month
+#| fig-cap: Average Amount of Delay Time for Buses by, Incident Type
 #| fig-align: center
-# Prepare the data: calculate the percentage of incidents by type for each vehicle
-data_incident_percentage <- data %>%
-  group_by(vehicle, Incident) %>%
-  summarise(incident_count = n(), .groups = 'drop') %>%
-  group_by(vehicle) %>%
-  mutate(percentage = (incident_count / sum(incident_count)) * 100)
-
-# Lump incidents making up less than 5% into "Other"
-data_incident_percentage <- data_incident_percentage %>%
-  mutate(Incident = ifelse(percentage < 5, "Other", Incident)) %>%
-  group_by(vehicle, Incident) %>%
-  summarise(incident_count = sum(incident_count), percentage = sum(percentage), .groups = 'drop')
-
-# Function to create doughnut chart for a specific vehicle
-create_doughnut_chart <- function(vehicle_type) {
-  # Filter data for the specific vehicle type
-  vehicle_data <- data_incident_percentage %>%
-    filter(vehicle == vehicle_type)
-  
-  # Create the doughnut chart
-  ggplot(vehicle_data, aes(x = 2, y = percentage, fill = Incident)) +
-    geom_bar(stat = "identity", width = 1) +
-    coord_polar(theta = "y") +
-    xlim(0.5, 2.5) +  # Adjust the x-axis limits to create the doughnut shape
-    geom_text(aes(label = paste0(Incident, "\n", round(percentage, 1), "%")), 
-              position = position_stack(vjust = 0.5), size = 3) +
-    labs(title = paste("Incident Distribution for", vehicle_type)) +
-    theme_void() +  # Clean theme for the doughnut chart
-    theme(legend.position = "none")  # Hide the legend for a cleaner look
-}
-
-# Create doughnut charts for each vehicle type
-bus_doughnut <- create_doughnut_chart("Bus")
-streetcar_doughnut <- create_doughnut_chart("Streetcar")
-subway_doughnut <- create_doughnut_chart("Subway")
-
-# Arrange the charts side by side
-bus_doughnut + streetcar_doughnut + subway_doughnut
 
 
-```
-
-
-```{r ave-time-delay}
-#| message: false
-#| echo: false
-#| warning: false
-#| fig-cap: Delay Incidence by Month
-#| fig-align: center
 # Prepare the data: calculate the average delay time for each incident type and vehicle
 data_incident_avg_delay <- data %>%
   group_by(vehicle, Incident) %>%
@@ -205,19 +149,90 @@ create_bar_chart <- function(vehicle_type) {
 
 # Generate the separate bar charts for each vehicle type
 bus_bar_chart <- create_bar_chart("Bus")
-streetcar_bar_chart <- create_bar_chart("Streetcar")
-subway_bar_chart <- create_bar_chart("Subway")
-
-# Print each graph individually
-print(bus_bar_chart)
-print(streetcar_bar_chart)
-print(subway_bar_chart)
-  
+bus_bar_chart
 
 ```
 
 
+```{r ave-delay-streetcar}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Average Amount of Delay Time for Streetcars, by Incident Type
+#| fig-align: center
+streetcar_bar_chart <- create_bar_chart("Streetcar")
+streetcar_bar_chart
+```
+
+
+```{r ave-delay-subway}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Average Amount of Delay Time for Subways, by Incident Type
+#| fig-align: center
+
+subway_bar_chart <- create_bar_chart("Subway")
+subway_bar_chart
+
+```
+
+```{r ave-delay-days}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Average Amount of Delay Time by Day
+#| fig-align: center
+# Step 1: Extract the day of the week from the Date column and calculate average delay time by day of the week
+data_avg_delay_by_day <- data %>%
+  mutate(day_of_week = wday(Date, label = TRUE, abbr = FALSE)) %>%  # Extract day of the week from Date
+  group_by(day_of_week) %>%
+  summarise(avg_delay = mean(Delay, na.rm = TRUE), .groups = 'drop')
+
+# Step 2: Create the bar chart for average delay by day of the week
+ggplot(data_avg_delay_by_day, aes(x = day_of_week, y = avg_delay)) +
+  geom_bar(stat = "identity", fill = "steelblue") +  # Vertical bars for average delay
+  labs(title = "Average Delay Time by Day of the Week", 
+       x = "Day of the Week", y = "Average Delay Time (Minutes)") +
+  theme_minimal()
+
+```
+
+
+```{r ave-delay-months}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Average Amount of Delay Time by Month
+#| fig-align: center
+
+# Step 1: Extract the month from the Date column and calculate average delay time by month
+data_avg_delay_by_month <- data %>%
+  mutate(month = month(Date, label = TRUE, abbr = FALSE)) %>%  # Extract month from Date and get full month names
+  group_by(month) %>%
+  summarise(avg_delay = mean(Delay, na.rm = TRUE), .groups = 'drop')
+
+# Step 2: Reorder the months to display them in chronological order
+data_avg_delay_by_month <- data_avg_delay_by_month %>%
+  mutate(month = factor(month, levels = month.name))  # Ensure months are ordered chronologically
+
+# Step 3: Create the bar chart with switched axes
+ggplot(data_avg_delay_by_month, aes(x = month, y = avg_delay)) +
+  geom_bar(stat = "identity", fill = "steelblue") +  # Vertical bars with average delay
+  labs(title = "Average Delay Time by Month", 
+       x = "Month", y = "Average Delay Time (Minutes)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 10))  # Rotate x-axis labels for readability
+```
+
 ```{r incidents-over-time}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Number of Incidents Over Time
+#| fig-align: center
+
+
 data_inc_num <- data %>%
   group_by(month = floor_date(Date, "month"), vehicle) %>%
   summarise(incident_count = n())
@@ -228,39 +243,36 @@ ggplot(data_inc_num, aes(x = month, y = incident_count, color = vehicle, group =
   labs(title = "Number of Incidents Over Time by Vehicle", x = "Time", y = "Number of Incidents", color = "Vehicle Type") +
   theme_minimal()
 
+```
 
-
-
+```{r delay-over-time}
+#| message: false
+#| echo: false
+#| warning: false
+#| fig-cap: Delay Time from 2014 to 2024
+#| fig-align: center
 
 data_monthly_delay <- data %>%
   group_by(month = floor_date(Date, "month"), vehicle) %>%
-  summarise(total_delay = sum(Delay, na.rm = TRUE), .groups = 'drop')
+  summarise(average_delay = mean(Delay, na.rm = TRUE), .groups = 'drop')
 
+View(data_monthly_delay)
 
-# Create the line graph for monthly total delay times
-ggplot(data_monthly_delay, aes(x = month, y = total_delay, color = vehicle, group = vehicle)) +
+# Create the line graph for monthly average delay times
+ggplot(data_monthly_delay, aes(x = month, y = average_delay, color = vehicle, group = vehicle)) +
   geom_line(size = 1) +
-  labs(title = "Total Delay Time Over Time by Vehicle (Monthly)", 
-       x = "Time (Month)", y = "Total Delay Time (Minutes)", color = "Vehicle Type") +
+  labs(title = "Average Delay Time Over Time by Vehicle (Monthly)", 
+       x = "Time (Month)", y = "Average Delay Time (Minutes)", color = "Vehicle Type") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
 ```
 
 
 
-```{r}
-data_total_delay <- data %>%
-  group_by(month = floor_date(Date, "month")) %>%  # Group by month
-  summarise(total_delay = sum(Delay, na.rm = TRUE), .groups = 'drop')
 
-# Create the line chart
-ggplot(data_total_delay, aes(x = month, y = total_delay)) +
-  geom_line(size = 1, color = "steelblue") +  # Single line with color
-  labs(title = "Total Delay Time Over Time", 
-       x = "Time (Month)", y = "Total Delay Time (Minutes)") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
 
 # Discussion {#sec-discussion}
 

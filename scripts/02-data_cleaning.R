@@ -72,7 +72,7 @@ combined_data <- bind_rows(raw_data_bus, raw_data_streetcar, raw_data_subway)
 
 
 
-
+# Need to find all of the possible incidents in order to standardize them
 unique_incidents <- combined_data %>%
   group_by(Incident) %>%
   slice(1) %>%
@@ -80,8 +80,7 @@ unique_incidents <- combined_data %>%
 
 #View(unique_incidents)
 
-
-#Fix some categories
+#Fix all incident categories
 combined_data <- combined_data |> mutate(
   Incident =
     case_match(
@@ -116,7 +115,7 @@ combined_data <- combined_data |> mutate(
       "Road Blocked - NON-TTC Collision" ~ "Collision",
       "Roadblock by Collision - Non-TTC" ~ "Collision",
       "Security" ~ "Security",
-      "Securitty" ~ "Security",  # Handling the typo
+      "Securitty" ~ "Security",
       "Utilized Off Route" ~ "Diversion",
       "Utilizing Off Route" ~ "Diversion",
       "Vision" ~ "Vision",
@@ -127,8 +126,8 @@ combined_data <- combined_data |> mutate(
 )
 View(combined_data)
 
-
-#From Test we need to Remove some rows that are corrupted
+# TODO
+# From Test we need to Remove some rows that are corrupted
 # I first remove any rows that contain an NA, though this data may be accurate
 # I want my analysis to focus on the complete record
 
