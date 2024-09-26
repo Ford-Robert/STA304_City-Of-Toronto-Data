@@ -5,7 +5,6 @@ format: pdf
 editor: visual
 ---
 
-
 ```{r incident-type}
 #| message: false
 #| echo: false
@@ -54,7 +53,6 @@ bus_doughnut + streetcar_doughnut + subway_doughnut
 
 ```
 
-
 ```{r}
 # Step 1: Calculate the average delay per incident by time and vehicle type
 data_avg_delay_time <- data %>%
@@ -69,4 +67,77 @@ ggplot(data_avg_delay_time, aes(x = year_month, y = avg_delay, color = vehicle, 
        x = "Time (Year-Month)", y = "Average Delay (Minutes)", color = "Transport Mode") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# Calculate total delay by vehicle and incident
+data_incident_delay <- data %>%
+  group_by(vehicle, Incident) %>%
+  summarise(total_delay = sum(Delay, na.rm = TRUE)) %>%
+  ungroup()
+
+# Calculate proportions for each incident by vehicle
+data_incident_delay <- data_incident_delay %>%
+  group_by(vehicle) %>%
+  mutate(total_vehicle_delay = sum(total_delay),
+         proportion = total_delay / total_vehicle_delay * 100) %>%
+  ungroup()
+
+# Keep top 5 incidents per vehicle and group the rest as "Other"
+data_top5_incidents <- data_incident_delay %>%
+  group_by(vehicle) %>%
+  arrange(vehicle, desc(proportion)) %>%
+  mutate(rank = row_number()) %>%
+  mutate(Incident = ifelse(rank > 5, "Other", Incident)) %>%
+  group_by(vehicle, Incident) %>%
+  summarise(total_delay = sum(total_delay),
+            proportion = sum(proportion)) %>%
+  ungroup()
+
+incident_colors <- c(
+  "Cleaning" = "#1f77b4",
+  "Collision" = "#ff7f0e",
+  "Diversion" = "#2ca02c",
+  "Emergency Services" = "#d62728",
+  "General Delay" = "#9467bd",
+  "Held By" = "#8c564b",
+  "Investigation" = "#d62728",
+  "Late Entering Service" = "#7f7f7f",
+  "Late Leaving Garage" = "#bcbd22",
+  "Management" = "#17becf",
+  "Mechanical" = "#1f77b4",
+  "Operations" = "#ff7f0e",
+  "Overhead" = "#2ca02c",
+  "Rail/Switches" = "#2ca02c",
+  "Security" = "#d62728",
+  "Vision" = "#8c564b",
+  "Other" = "#7f7f7f",
+  "N/A" = "#7f7f7f"
+)
+
+# Function to create a pie chart for a given vehicle
+create_pie_chart <- function(data, vehicle_type) {
+  data_vehicle <- data %>% filter(vehicle == vehicle_type)
+  
+  ggplot(data_vehicle, aes(x = "", y = proportion, fill = Incident)) +
+    geom_bar(width = 1, stat = "identity", color = "white") +
+    coord_polar("y") +
+    labs(title = vehicle_type) +
+    theme_void() +  # Removes background and axis
+    theme(legend.position = "none",  # Removes the legend
+          plot.title = element_text(hjust = 0.5)) + 
+    geom_text(aes(label = paste0(Incident, ": ", round(proportion, 1), "%")), 
+              position = position_stack(vjust = 0.5), size = 3) +
+    scale_fill_manual(values = incident_colors)  # Apply the consistent color palette
+}
+
+# Create pie charts for each vehicle type
+bus_pie <- create_pie_chart(data_top5_incidents, "Bus")
+streetcar_pie <- create_pie_chart(data_top5_incidents, "Streetcar")
+subway_pie <- create_pie_chart(data_top5_incidents, "Subway")
+
+# Arrange the pie charts side by side
+(bus_pie | streetcar_pie | subway_pie) + 
+  plot_annotation(title = "Proportion of Total Delay Time by Incident (Top 5 + Other)")
+
 ```
