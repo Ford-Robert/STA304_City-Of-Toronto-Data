@@ -18,7 +18,7 @@ raw_data_subway <-read_csv("inputs/data/subway_data.csv")
 #subway_codes <- read_csv("inputs/data/subway-delay-codes.csv")
 
 
-View(raw_data_bus)
+#View(raw_data_bus)
 #View(raw_streetcar_data)
 #View(raw_data_subway)
 #str(raw_bus_data)
@@ -114,8 +114,8 @@ combined_data <- combined_data |> mutate(
       "Road Block - Non-TTC Collision" ~ "Collision",
       "Road Blocked - NON-TTC Collision" ~ "Collision",
       "Roadblock by Collision - Non-TTC" ~ "Collision",
-      "Security" ~ "Security",
-      "Securitty" ~ "Security",
+      "Security" ~ "Investigation",
+      "Securitty" ~ "Investigation",
       "Utilized Off Route" ~ "Diversion",
       "Utilizing Off Route" ~ "Diversion",
       "Vision" ~ "Vision",
@@ -126,10 +126,16 @@ combined_data <- combined_data |> mutate(
 )
 View(combined_data)
 
+head(combined_data)
 # TODO
 # From Test we need to Remove some rows that are corrupted
-# I first remove any rows that contain an NA, though this data may be accurate
-# I want my analysis to focus on the complete record
+# remove any rows that contain an NA in the Delay column
+# Remove any rows where Delay is negative
+# Remove any rows where Delay Exceeds 1440
+combined_data <- combined_data %>%
+  filter(!is.na(Delay)) %>%
+  filter(Delay >= 0) %>%
+  filter(Delay <= 998)
 
 
 #### Save data ####

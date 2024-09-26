@@ -26,9 +26,9 @@ test_that("Data frame has correct columns", {
   expect_equal(colnames(df), expected_cols)
 })
 
-# Test that there are no missing values
-test_that("No missing values", {
-  expect_equal(sum(is.na(df)), 0)
+# Test that there are no missing Delay values
+test_that("No missing values in Delay column", {
+  expect_equal(sum(is.na(df$Delay)), 0)
 })
 
 # Test that the Date column is within the expected range and Delay is non-negative

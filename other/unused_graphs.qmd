@@ -1,3 +1,11 @@
+---
+title: "unused cool graphs"
+author: "Robert Ford"
+format: pdf
+editor: visual
+---
+
+
 ```{r incident-type}
 #| message: false
 #| echo: false
@@ -44,4 +52,21 @@ subway_doughnut <- create_doughnut_chart("Subway")
 bus_doughnut + streetcar_doughnut + subway_doughnut
 
 
+```
+
+
+```{r}
+# Step 1: Calculate the average delay per incident by time and vehicle type
+data_avg_delay_time <- data %>%
+  mutate(year_month = as.Date(format(Date, "%Y-%m-01"))) %>%  # Convert date to year-month
+  group_by(year_month, vehicle) %>%
+  summarise(avg_delay = mean(Delay, na.rm = TRUE), .groups = 'drop')
+
+# Step 2: Create the line graph with 3 lines for each transport mode
+ggplot(data_avg_delay_time, aes(x = year_month, y = avg_delay, color = vehicle, group = vehicle)) +
+  geom_line(size = 1) +
+  labs(title = "Average Delay Time per Incident by Transport Mode (2014 - 2024)", 
+       x = "Time (Year-Month)", y = "Average Delay (Minutes)", color = "Transport Mode") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
