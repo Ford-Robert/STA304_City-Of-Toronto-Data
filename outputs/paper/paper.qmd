@@ -1,8 +1,6 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
-author: 
-  - Robert Ford
+title: "Ten Years of TTC Delays, an Analysis"
+author: Robert Ford
 thanks: "Code and data are available at: https://github.com/Ford-Robert/STA304_City-Of-Toronto-Data.git"
 date: 27/09/2024
 date-format: 27 September 2024
@@ -38,9 +36,9 @@ data <- read_csv(here::here("outputs/data/cleaned_dataset.csv"))
 
 
 # Introduction{#sec-introduction}
-Effective public transportation is vital to any large dense urban area. It has the capacity to significantly reduce traffic congestion [REF] and improve transportation times for all residents of a city. Public transportation also provides affordable transportation options allowing for a more equitable society, in which everyone has access to opportunities across a city [REF]. Expanding TTC services, and ensuring reliability, is the best option for taking cars off the road which would directly reduce both emissions [REF] and car related deaths within the city [REF]. 
+Effective public transportation is vital to any large dense urban area. It has the capacity to significantly reduce traffic congestion [@anderson] and improve transportation times for all residents of a city. Public transportation also provides affordable transportation options allowing for a more equitable society, in which everyone has access to opportunities across a city [@wbpublic]. Expanding TTC services, and ensuring reliability, is the best option for taking cars off the road which would directly reduce both emissions [@welle] and car related deaths within the city [@buch]. 
 
-Despite the importance of the TTC, public opinion in Toronto suggests that the TTC is failing to meet the needs of its riders. Complaints about aging infrastructure, frequent delays, and most glaringly safety concerns are widely shared among Torontonians [REF]. Another point of criticism is that the TTC, especially the subway, has failed to expand much in recent years, despite Toronto growing significantly in population. 
+Despite the importance of the TTC, public opinion in Toronto suggests that the TTC is failing to meet the needs of its riders. Complaints about aging infrastructure, frequent delays, and most glaringly safety concerns are widely shared among Torontonians [@blogto]. Another point of criticism is that the TTC, especially the subway, has failed to expand much in recent years, despite Toronto growing significantly in population. 
 
 Considering these concerns this paper analyzes TTC delay data from 2014 to 2024, to assess whether its service have truly deteriorated over the past decade. By examining delays across subways, streetcars, and buses, this study will first compare these services with each other to explore which suffers the most from high delay times and large numbers of incidents. Then this study aims to identify the specific challenges each service faces. Finally, this paper will explore how delay times and incident rates are distributed over days of the week, and how these metrics have trended over the last ten years. 
 
@@ -49,7 +47,7 @@ These findings offer insights for policymakers, transit authorities, and the pub
 
 # Data {#sec-data}
 
-Delay Data detailing the operations of the TTC was collected and cleaned from the Open Data Toronto [REF] website. This data spans about 10 years, from 2014 to 2024. Three separate datasets were used, Delay data related to the Subway[REF], Streetcar[REF] and Bus[REF]. The original datasets are separated into a variety of formats depending on which year you are examining. The way in which variable names and the data stored changes over time. To further complicate the collection process, the information found in each dataset was different, though it mostly represented the same concepts. Data that was too difficult to integrate into one combined dataset that incorporated all ten years, and all three modes of transport was excluded. The final dataset contains 1,042,564 observations of 6 variables; 
+Delay Data detailing the operations of the TTC was collected and cleaned from the Open Data Toronto [@citedatatoronto] website. This data spans about 10 years, from 2014 to 2024. Three separate datasets were used, Delay data related to the Subway [@subwaydata], Streetcar [@streetcardata] and Bus[@busdata]. The original datasets are separated into a variety of formats depending on which year you are examining. The way in which variable names and the data stored changes over time. To further complicate the collection process, the information found in each dataset was different, though it mostly represented the same concepts. Data that was too difficult to integrate into one combined dataset that incorporated all ten years, and all three modes of transport was excluded. The final dataset contains 1,042,564 observations of 6 variables; 
 
   -Date: The Year, Month and Day that a delay occurred 
 
@@ -297,7 +295,7 @@ ggplot(data_avg_delay_by_month, aes(x = month, y = avg_delay)) +
 ```
 
 
-Finally, to get a wider view of how incidents have changed over the past 10 years we look to @fig-over-time and @fig-total-delay In @fig-over-time we see that the number of bus incidents decreased dramatically between 2014 and 2021. Interestingly this trend of lower number of incidents does not correlate with total incident time, as we observe in @fig-total-delay. This may be due to the TTC changing how they classify incidents, so the data is entered differently but the amount of delay time remains stable.
+Finally, to get a wider view of how incidents have changed over the past 10 years we look to @fig-over-time and @fig-totaltime-delay In @fig-over-time we see that the number of bus incidents decreased dramatically between 2014 and 2021. Interestingly this trend of lower number of incidents does not correlate with total incident time, as we observe in @fig-totaltime-delay. This may be due to the TTC changing how they classify incidents, so the data is entered differently but the amount of delay time remains stable.
 ```{r fig-over-time}
 #| message: false
 #| echo: false
@@ -318,7 +316,7 @@ ggplot(data_inc_num, aes(x = month, y = incident_count, color = vehicle, group =
 
 ```
 
-```{r fig-total-delay}
+```{r fig-totaltime-delay}
 #| message: false
 #| echo: false
 #| warning: false
@@ -340,7 +338,7 @@ ggplot(data_total_delay_time, aes(x = month, y = total_delay, color = vehicle, g
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability
 
 ```
-@fig-total-delay suggests that total incident time remains stable for buses, except in 2020 and 2021 where there is a noticeable drop. This drop could be related to the Covid-19 pandemic for several reasons. Firstly, ridership dropped dramatically during the pandemic therefore fewer buses were scheduled and thus fewer Diversions, Overhead and Collisions. There is a modest drop in Streetcar Delay times as well which would support this narrative. Secondly, the city made public transportation free during the pandemic, so delays due to Investigations would fall. In @fig-ave-delaytime observe that average delay time did not noticeably drop during the pandemic. This lends further support to these claims, as average Incident delay time remained the same, however far fewer incidents were occurring as the system was constricted. Furthermore, Fig10 indicates that over the last 10 years the average delay time per incident has been increasing slightly. This could be an indication that the aging fleet of TTC vehicles requires more time to resolve certain incidents.
+@fig-totaltime-delay suggests that total incident time remains stable for buses, except in 2020 and 2021 where there is a noticeable drop. This drop could be related to the Covid-19 pandemic for several reasons. Firstly, ridership dropped dramatically during the pandemic therefore fewer buses were scheduled and thus fewer Diversions, Overhead and Collisions. There is a modest drop in Streetcar Delay times as well which would support this narrative. Secondly, the city made public transportation free during the pandemic, so delays due to Investigations would fall. In @fig-ave-delaytime observe that average delay time did not noticeably drop during the pandemic. This lends further support to these claims, as average Incident delay time remained the same, however far fewer incidents were occurring as the system was constricted. Furthermore, Fig10 indicates that over the last 10 years the average delay time per incident has been increasing slightly. This could be an indication that the aging fleet of TTC vehicles requires more time to resolve certain incidents.
 
 ```{r fig-ave-delaytime}
 #| message: false
@@ -380,7 +378,3 @@ To build on these findings, further exploration focusing on location data could 
 
 
 # References
-
-
-::: {#refs}
-:::
