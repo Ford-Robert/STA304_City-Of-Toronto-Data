@@ -221,7 +221,7 @@ bus_bar_chart <- create_bar_chart("Bus")
 bus_bar_chart
 
 ```
-```{r fig-delay-streetcar}
+```{r fig-delay-streetcar, fig.pos='H'}
 #| message: false
 #| echo: false
 #| warning: false
@@ -230,7 +230,7 @@ bus_bar_chart
 streetcar_bar_chart <- create_bar_chart("Streetcar")
 streetcar_bar_chart
 ```
-```{r fig-delay-subway}
+```{r fig-delay-subway, fig.pos='H'}
 #| message: false
 #| echo: false
 #| warning: false
@@ -241,6 +241,7 @@ subway_bar_chart <- create_bar_chart("Subway")
 subway_bar_chart
 
 ```
+
 
 
 
@@ -294,7 +295,6 @@ ggplot(data_avg_delay_by_month, aes(x = month, y = avg_delay)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 10))  # Rotate x-axis labels for readability
 ```
-
 
 Finally, to get a wider view of how incidents have changed over the past 10 years we look to @fig-over-time and @fig-totaltime-delay In @fig-over-time we see that the number of bus incidents decreased dramatically between 2014 and 2021. Interestingly this trend of lower number of incidents does not correlate with total incident time, as we observe in @fig-totaltime-delay. This may be due to the TTC changing how they classify incidents, so the data is entered differently but the amount of delay time remains stable.
 ```{r fig-over-time}
@@ -365,6 +365,7 @@ ggplot(data_monthly_delay, aes(x = month, y = average_delay, color = vehicle, gr
 ```
 
 
+\newpage
 
 # Discussion {#sec-discussion}
 
