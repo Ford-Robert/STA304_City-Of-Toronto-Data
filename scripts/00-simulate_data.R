@@ -9,11 +9,24 @@
 
 
 #### Workspace setup ####
-library(tidyverse)
-# [...UPDATE THIS...]
+library(dplyr)
+library(lubridate)
 
 #### Simulate data ####
 set.seed(304)
+
+incident_types <- c('Mechanical', 'General Delay', 'Emergency Services', 'Investigation', 'Signal Issue', 'Medical Emergency')
+vehicles <- c('Bus', 'Streetcar', 'Subway')
+
+# Simulate data
+data_sim <- tibble(
+  Incident = sample(incident_types, 50, replace = TRUE),
+  Delay = sample(5:60, 50, replace = TRUE),
+  Vehicle = sample(vehicles, 50, replace = TRUE),         
+  Date = sample(seq(as.Date('2014-01-01'), as.Date('2024-12-31'), by="day"), 50, replace = TRUE)  # Random dates between 2014 and 2024
+)
+
+print(head(data_sim, 5))
 
 
 
