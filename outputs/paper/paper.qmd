@@ -38,7 +38,13 @@ data <- read_csv(here::here("outputs/data/cleaned_dataset.csv"))
 
 
 # Introduction{#sec-introduction}
+Effective public transportation is vital to any large dense urban area. It has the capacity to significantly reduce traffic congestion [REF] and improve transportation times for all residents of a city. Public transportation also provides affordable transportation options allowing for a more equitable society, in which everyone has access to opportunities across a city [REF]. Expanding TTC services, and ensuring reliability, is the best option for taking cars off the road which would directly reduce both emissions [REF] and car related deaths within the city [REF]. 
 
+Despite the importance of the TTC, public opinion in Toronto suggests that the TTC is failing to meet the needs of its riders. Complaints about aging infrastructure, frequent delays, and most glaringly safety concerns are widely shared among Torontonians [REF]. Another point of criticism is that the TTC, especially the subway, has failed to expand much in recent years, despite Toronto growing significantly in population. 
+
+Considering these concerns this paper analyzes TTC delay data from 2014 to 2024, to assess whether its service have truly deteriorated over the past decade. By examining delays across subways, streetcars, and buses, this study will first compare these services with each other to explore which suffers the most from high delay times and large numbers of incidents. Then this study aims to identify the specific challenges each service faces. Finally, this paper will explore how delay times and incident rates are distributed over days of the week, and how these metrics have trended over the last ten years. 
+
+These findings offer insights for policymakers, transit authorities, and the public. By taking a deep dive into the publicly available data, this analysis provides a foundation for understanding TTC delays across buses, streetcars, and subways. The paper includes an exploration of the data by constructing easy-to-read graphs, designed to highlight the areas of greatest concern within the TTC. 
 
 
 # Data {#sec-data}
