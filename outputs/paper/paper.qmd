@@ -3,7 +3,7 @@ title: "Ten Years of TTC Delays an Analysis"
 author: Robert Ford
 thanks: "Code and data are available at: https://github.com/Ford-Robert/STA304_City-Of-Toronto-Data.git"
 date: 27/09/2024
-date-format: 27 September 2024
+date-format: 27 Sept 2024
 abstract: "This study analyzes ten years of delay data from the Toronto Transit Commission (TTC), focusing on subways, streetcars, and buses to assess changes in delay times of these services. The analysis found that buses experience the highest number of delays and the longest total and average delay times, while subway delays are resolved much faster on average. The analysis also delves into the specific challenges each service faces, analyzing which incidents they are most likely to experience and how long those incidents take to resolve. These findings provide data-driven insights for improving TTC operations and uncovering the specific challenges faced by each transportation mode."
 format: pdf
 number-sections: true
@@ -33,7 +33,7 @@ data <- read_csv(here::here("outputs/data/cleaned_dataset.csv"))
 
 ```
 
-
+\newpage
 
 # Introduction{#sec-introduction}
 Effective public transportation is vital to any large dense urban area. It has the capacity to significantly reduce traffic congestion [@anderson] and improve transportation times for all residents of a city. Public transportation also provides affordable transportation options allowing for a more equitable society, in which everyone has access to opportunities across a city [@wbpublic]. Expanding TTC services, and ensuring reliability, is the best option for taking cars off the road which would directly reduce both emissions [@welle] and car related deaths within the city [@buch]. 
@@ -44,8 +44,11 @@ Considering these concerns this paper analyzes TTC delay data from 2014 to 2024,
 
 These findings offer insights for policymakers, transit authorities, and the public. By taking a deep dive into the publicly available data, this analysis provides a foundation for understanding TTC delays across buses, streetcars, and subways. The paper includes an exploration of the data by constructing easy-to-read graphs, designed to highlight the areas of greatest concern within the TTC. 
 
+\newpage
 
 # Data {#sec-data}
+
+All data was collected and cleaned using R (@citeR), and its tidyverse (@citetidyverse), lubridate (@lubridate), and readxl (@citereadxl) packages.
 
 Delay Data detailing the operations of the TTC was collected and cleaned from the Open Data Toronto [@citedatatoronto] website. This data spans about 10 years, from 2014 to 2024. Three separate datasets were used, Delay data related to the Subway [@subwaydata], Streetcar [@streetcardata] and Bus[@busdata]. The original datasets are separated into a variety of formats depending on which year you are examining. The way in which variable names and the data stored changes over time. To further complicate the collection process, the information found in each dataset was different, though it mostly represented the same concepts. Data that was too difficult to integrate into one combined dataset that incorporated all ten years, and all three modes of transport was excluded. The final dataset contains 1,042,564 observations of 6 variables; 
 
