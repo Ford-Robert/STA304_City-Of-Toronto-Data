@@ -4,9 +4,9 @@ subtitle: "My subtitle if needed"
 author: 
   - Robert Ford
 thanks: "Code and data are available at: https://github.com/Ford-Robert/STA304_City-Of-Toronto-Data.git"
-date: today
-date-format: long??
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+date: 27/09/2024
+date-format: 27 September 2024
+abstract: "This study analyzes ten years of delay data from the Toronto Transit Commission (TTC), focusing on subways, streetcars, and buses to assess changes in delay times of these services. The analysis found that buses experience the highest number of delays and the longest total and average delay times, while subway delays are resolved much faster on average. The analysis also delves into the specific challenges each service faces, analyzing which incidents they are most likely to experience and how long those incidents take to resolve. These findings provide data-driven insights for improving TTC operations and uncovering the specific challenges faced by each transportation mode."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -34,6 +34,8 @@ library(patchwork)
 data <- read_csv(here::here("outputs/data/cleaned_dataset.csv"))
 
 ```
+
+
 
 # Introduction{#sec-introduction}
 
