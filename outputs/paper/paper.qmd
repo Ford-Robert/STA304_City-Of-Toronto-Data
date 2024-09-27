@@ -48,6 +48,7 @@ These findings offer insights for policymakers, transit authorities, and the pub
 
 
 # Data {#sec-data}
+
 Delay Data detailing the operations of the TTC was collected and cleaned from the Open Data Toronto [REF] website. This data spans about 10 years, from 2014 to 2024. Three separate datasets were used, Delay data related to the Subway[REF], Streetcar[REF] and Bus[REF]. The original datasets are separated into a variety of formats depending on which year you are examining. The way in which variable names and the data stored changes over time. To further complicate the collection process, the information found in each dataset was different, though it mostly represented the same concepts. Data that was too difficult to integrate into one combined dataset that incorporated all ten years, and all three modes of transport was excluded. The final dataset contains 1,042,564 observations of 6 variables; 
 
   -Date: The Year, Month and Day that a delay occurred 
@@ -66,18 +67,20 @@ Delay Data detailing the operations of the TTC was collected and cleaned from th
 #| message: false
 #| echo: false
 #| warning: false
-#| fig-cap: (left) Total Number of Incidents (right) Total Amount of Delay Time
+#| fig-cap: First five rows of the Final Dataset
 #| fig-align: center
 
-
+kable(head(data, 5), caption = "Sample of the Data")
 ```
  
 
 In the cleaning phase, all data entries that had an incomplete (NA) value for the Delay variable were removed. Because if a delay occurred but we do not how impactful that delay was, then it does not contribute to the analysis. Data that was clearly erroneous was removed, like negative delay times and extremely high delay times. Furthermore, all observations whose delay time exceeded 998 minutes (999 minutes was the code for a cancellation between 2015 and 2019) were removed. 
 
 
+## Delay of Vehicles {#subsec1-data}
 
-```{r num-incidents-by-mode}
+First this paper will assess which Mode of Transport suffers the most from delays. From @fig-incidents-mode, we observe that buses suffer the highest number of delays and are delayed for the longest period. Interestingly, though the subways suffer from more Incidents than the streetcar, its total time lost to delays is significantly less. This would indicate that individual Subway incidents are resolved faster than Streetcar incidents on average. 
+```{r fig-incidents-mode}
 #| message: false
 #| echo: false
 #| warning: false
@@ -104,9 +107,9 @@ plot2 <- ggplot(cumulative_delay, aes(x = vehicle, y = total_delay)) +
 grid.arrange(plot1, plot2, ncol = 2)
 
 ```
-First this paper will assess which Mode of Transport suffers the most from delays. From [FIG], we observe that buses suffer the highest number of delays and are delayed for the longest period. Interestingly, though the subways suffer from more Incidents than the streetcar, its total time lost to delays is significantly less. This would indicate that individual Subway incidents are resolved faster than Streetcar incidents on average. 
 
-```{r ave-delay-by-mode}
+
+```{r fig-ave-delay}
 #| message: false
 #| echo: false
 #| warning: false
@@ -124,13 +127,13 @@ ggplot(average_delay, aes(x = vehicle, y = avg_delay)) +
 
 ```
 
-[FIG2] would support this claim, as on average Streetcar delays take 13 minutes to resolve whereas Subway delays only take about 2.30 minutes to resolve. Unfortunately, Buses not only have the most delays, but its delays on average take about 20 minutes to resolve.
+@fig-ave-delay would support this claim, as on average Streetcar delays take 13 minutes to resolve whereas Subway delays only take about 2.30 minutes to resolve. Unfortunately, Buses not only have the most delays, but its delays on average take about 20 minutes to resolve.
 
 
-NEXT SUBSECT
+## Causes of Delays {#subsec2-data}
 To discover why Bus delays are so much worse than Subway and Streetcar delays, we need to observer the differences in how long every type of incident takes to resolve, as well as what type of incident each mode of transport suffers from the most. This will also provide crucial insight into which Incidents are the most problematic, then the TTC may focus their efforts on the most disruptive incidents.  
 
-```{r total-delay-incident}
+```{r fig-total-delay}
 #| message: false
 #| echo: false
 #| warning: false
@@ -154,9 +157,9 @@ ggplot(data_incident_total_delay, aes(x = Incident, y = total_delay)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 10))
 
 ```
-From [FIG3] we can see that Diversions make up the bulk of the total time lost to delays over the last 10 years. This could be due to the sheer number of Diversions that happen, or each Diversion causes a large delay. By investigating [FIG4] we observe that Diversions on average take a long time to resolve.
+From @fig-total-delay we can see that Diversions make up the bulk of the total time lost to delays over the last 10 years. This could be due to the sheer number of Diversions that happen, or each Diversion causes a large delay. By investigating @fig-delay-incident we observe that Diversions on average take a long time to resolve.
 
-```{r ave-delay-by-incident}
+```{r fig-delay-incident}
 #| message: false
 #| echo: false
 #| warning: false
@@ -185,9 +188,9 @@ data_incident_by_delay <- data %>%
   mutate(Incident = fct_reorder(Incident, avg_delay, .desc = TRUE))
 
 ```
-Next, we will break down average delay time by each mode of transport, as this will give us a better understanding of incidents are the most disruptive for each mode of transport. In [Fig5] we observe that buses are most impacted by Held by, Overhead, and Diversions. To most improve Bus services the TTC should focus on reducing the average delay times of these Incidents. [Fig6] displays that the Streetcar is plagued by the same high-cost average delay time incidents. However, the spread for Streetcar is broader so targeting these three incidents would not be as impactful as it is for buses. However, [Fig7] shows part of why the subway suffers so much less from delays. The incidents the subway suffers from take only 4 minutes on average to resolve, in the worst case.
+Next, we will break down average delay time by each mode of transport, as this will give us a better understanding of incidents are the most disruptive for each mode of transport. In @fig-delay-bus we observe that buses are most impacted by Held by, Overhead, and Diversions. To most improve Bus services the TTC should focus on reducing the average delay times of these Incidents. @fig-delay-streetcar displays that the Streetcar is plagued by the same high-cost average delay time incidents. However, the spread for Streetcar is broader so targeting these three incidents would not be as impactful as it is for buses. However, @fig-delay-subway shows part of why the subway suffers so much less from delays. The incidents the subway suffers from take only 4 minutes on average to resolve, in the worst case.
 
-```{r ave-delay-bus}
+```{r fig-delay-bus}
 #| message: false
 #| echo: false
 #| warning: false
@@ -221,9 +224,7 @@ bus_bar_chart <- create_bar_chart("Bus")
 bus_bar_chart
 
 ```
-
-
-```{r ave-delay-streetcar}
+```{r fig-delay-streetcar}
 #| message: false
 #| echo: false
 #| warning: false
@@ -232,7 +233,7 @@ bus_bar_chart
 streetcar_bar_chart <- create_bar_chart("Streetcar")
 streetcar_bar_chart
 ```
-```{r ave-delay-subway}
+```{r fig-delay-subway}
 #| message: false
 #| echo: false
 #| warning: false
@@ -244,10 +245,10 @@ subway_bar_chart
 
 ```
 
-NEXT SUBSECT -Delays Over Time-
+## Delays Over Time {#subsec3-data}
 
-To further investigate the data, we will investigate when incidents are likely to occur. From Fig[] we observe that the average delay time of incidents is about 2 minutes longer on the weekends. This could be because there are less TTC staff on the weekends, so incidents take longer to be delt with. Across months, FIG, there is little difference in the average delay time. This is surprising, as in the winter delays could be worse as weather conditions worsen. This may be a testament to the TTC’s ability to deal with Toronto’s harsh winters. 
-```{r ave-delay-days}
+To further investigate the data, we will investigate when incidents are likely to occur. From @fig-delay-days we observe that the average delay time of incidents is about 2 minutes longer on the weekends. This could be because there are less TTC staff on the weekends, so incidents take longer to be delt with. Across months, @fig-delay-months, there is little difference in the average delay time. This is surprising, as in the winter delays could be worse as weather conditions worsen. This may be a testament to the TTC’s ability to deal with Toronto’s harsh winters. 
+```{r fig-delay-days}
 #| message: false
 #| echo: false
 #| warning: false
@@ -269,7 +270,7 @@ ggplot(data_avg_delay_by_day, aes(x = day_of_week, y = avg_delay)) +
 ```
 
 
-```{r ave-delay-months}
+```{r fig-delay-months}
 #| message: false
 #| echo: false
 #| warning: false
@@ -296,8 +297,8 @@ ggplot(data_avg_delay_by_month, aes(x = month, y = avg_delay)) +
 ```
 
 
-Finally, to get a wider view of how incidents have changed over the past 10 years we look to FIG8 and FIG9. In Fig8 we see that the number of bus incidents decreased dramatically between 2014 and 2021. Interestingly this trend of lower number of incidents does not correlate with total incident time, as we observe in FIG9. This may be due to the TTC changing how they classify incidents, so the data is entered differently but the amount of delay time remains stable.
-```{r incidents-over-time}
+Finally, to get a wider view of how incidents have changed over the past 10 years we look to @fig-over-time and @fig-total-delay In @fig-over-time we see that the number of bus incidents decreased dramatically between 2014 and 2021. Interestingly this trend of lower number of incidents does not correlate with total incident time, as we observe in @fig-total-delay. This may be due to the TTC changing how they classify incidents, so the data is entered differently but the amount of delay time remains stable.
+```{r fig-over-time}
 #| message: false
 #| echo: false
 #| warning: false
@@ -317,7 +318,7 @@ ggplot(data_inc_num, aes(x = month, y = incident_count, color = vehicle, group =
 
 ```
 
-```{r total-delay-time}
+```{r fig-total-delay}
 #| message: false
 #| echo: false
 #| warning: false
@@ -339,9 +340,9 @@ ggplot(data_total_delay_time, aes(x = month, y = total_delay, color = vehicle, g
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability
 
 ```
-Fig9 suggests that total incident time remains stable for buses, except in 2020 and 2021 where there is a noticeable drop. This drop could be related to the Covid-19 pandemic for several reasons. Firstly, ridership dropped dramatically during the pandemic therefore fewer buses were scheduled and thus fewer Diversions, Overhead and Collisions. There is a modest drop in Streetcar Delay times as well which would support this narrative. Secondly, the city made public transportation free during the pandemic, so delays due to Investigations would fall. In Fig10 observe that average delay time did not noticeably drop during the pandemic. This lends further support to these claims, as average Incident delay time remained the same, however far fewer incidents were occurring as the system was constricted. Furthermore, Fig10 indicates that over the last 10 years the average delay time per incident has been increasing slightly. This could be an indication that the aging fleet of TTC vehicles requires more time to resolve certain incidents.
+@fig-total-delay suggests that total incident time remains stable for buses, except in 2020 and 2021 where there is a noticeable drop. This drop could be related to the Covid-19 pandemic for several reasons. Firstly, ridership dropped dramatically during the pandemic therefore fewer buses were scheduled and thus fewer Diversions, Overhead and Collisions. There is a modest drop in Streetcar Delay times as well which would support this narrative. Secondly, the city made public transportation free during the pandemic, so delays due to Investigations would fall. In @fig-ave-delaytime observe that average delay time did not noticeably drop during the pandemic. This lends further support to these claims, as average Incident delay time remained the same, however far fewer incidents were occurring as the system was constricted. Furthermore, Fig10 indicates that over the last 10 years the average delay time per incident has been increasing slightly. This could be an indication that the aging fleet of TTC vehicles requires more time to resolve certain incidents.
 
-```{r delay-over-time}
+```{r fig-ave-delaytime}
 #| message: false
 #| echo: false
 #| warning: false
@@ -370,7 +371,7 @@ ggplot(data_monthly_delay, aes(x = month, y = average_delay, color = vehicle, gr
 
 The results show that buses experience the highest number of delays and the longest total and average delay times. Incidents that have long average delay times such as diversions, mechanical issues, and “held by” incidents contribute most to the total delays buses suffer from. In contrast, subway delays are resolved more quickly on average, which may be attributed to less exposure to external factors like traffic, and a more controlled environment allowing for faster repair or replacement. 
 
-These findings have important implications for the TTC and its efforts to improve service reliability. For example, reducing the frequency and duration of diversions and mechanical issues could have a disproportionate effect on improving bus services. Expanding the Subway would also be a great strategy as it seems subway services are inherently more reliable, so maximizing ridership there would be really beneficial. 
+These findings have important implications for the TTC and its efforts to improve service reliability. For example, reducing the frequency and duration of diversions and mechanical issues could have a disproportionate effect on improving bus services. Expanding the Subway would be a great strategy as subway services are inherently more reliable, so maximizing ridership there would be beneficial.
 
 To build on these findings, further exploration focusing on location data could provide deeper insights into delay patterns across the city. Creating a heat map of Toronto that visualizes delay times would identify geographic hotspots where delays are most frequent or severe. This spatial analysis could help TTC officials focus their efforts on certain neighborhoods, intersections, or corridors that are more prone to delays. 
 
@@ -381,3 +382,5 @@ To build on these findings, further exploration focusing on location data could 
 # References
 
 
+::: {#refs}
+:::
