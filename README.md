@@ -1,7 +1,8 @@
 # Ten Years of TTC delays, an Analysis
 
 ## Overview
-
+This paper aims to create a better understanding of TTC delay data, in the hopes of raising awareness of how we
+might improve this crucial service.
 
 ## File Structure
 

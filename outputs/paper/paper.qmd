@@ -1,5 +1,5 @@
 ---
-title: "Ten Years of TTC Delays, an Analysis"
+title: "Ten Years of TTC Delays an Analysis"
 author: Robert Ford
 thanks: "Code and data are available at: https://github.com/Ford-Robert/STA304_City-Of-Toronto-Data.git"
 date: 27/09/2024
@@ -187,7 +187,6 @@ data_incident_by_delay <- data %>%
 
 ```
 Next, we will break down average delay time by each mode of transport, as this will give us a better understanding of incidents are the most disruptive for each mode of transport. In @fig-delay-bus we observe that buses are most impacted by Held by, Overhead, and Diversions. To most improve Bus services the TTC should focus on reducing the average delay times of these Incidents. @fig-delay-streetcar displays that the Streetcar is plagued by the same high-cost average delay time incidents. However, the spread for Streetcar is broader so targeting these three incidents would not be as impactful as it is for buses. However, @fig-delay-subway shows part of why the subway suffers so much less from delays. The incidents the subway suffers from take only 4 minutes on average to resolve, in the worst case.
-
 ```{r fig-delay-bus}
 #| message: false
 #| echo: false
@@ -242,6 +241,8 @@ subway_bar_chart <- create_bar_chart("Subway")
 subway_bar_chart
 
 ```
+
+
 
 ## Delays Over Time {#subsec3-data}
 
